@@ -37,9 +37,7 @@ def login(request: LoginRequest):
 def serve_create_task():
     return FileResponse("static/create-task.html")
 
-@app.get("/create-task.html")
-def serve_create_task_alias():
-    return FileResponse("static/create-task.html")
+
 
 @app.post("/create-task")
 def create_task_endpoint(request: TaskRequest):
