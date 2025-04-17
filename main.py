@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from schemas import LoginRequest, TaskRequest
@@ -15,6 +16,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def serve_login():
+    return FileResponse("static/login.html")
+
 @app.post("/login")
 def login(request: LoginRequest):
     user = authenticate_user(request.email, request.password)
@@ -27,6 +32,14 @@ def login(request: LoginRequest):
             "email": user["email"]
         }
     }
+
+@app.get("/create-task-form")
+def serve_create_task():
+    return FileResponse("static/create-task.html")
+
+@app.get("/create-task.html")
+def serve_create_task_alias():
+    return FileResponse("static/create-task.html")
 
 @app.post("/create-task")
 def create_task_endpoint(request: TaskRequest):
