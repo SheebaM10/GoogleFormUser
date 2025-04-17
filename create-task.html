@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Task</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0; 
+    }
+  
+    .task-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px; 
+      box-sizing: border-box; /* Ensures padding is included in width calculation */
+    }
+  
+    .task-box h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+  
+    .task-box input,
+    .task-box textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box; /* Ensures padding is included in width calculation */
+    }
+  
+    .task-box button {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      box-sizing: border-box; /* Ensures padding is included in width calculation */
+    }
+  
+    .task-box button:hover {
+      background-color: #218838;
+    }
+  
+    .message {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 0.9em;
+    }
+  </style>
+  
+</head>
+<body>
+
+<div class="task-box">
+  <h2>Daily Updates</h2>
+  <form id="taskForm">
+    <input type="text" id="name" placeholder="Name" required />
+    <input type="date" id="date" required />
+    <textarea id="task_details" placeholder="Task Details" rows="4" required></textarea>
+    <button type="submit">Submit</button>
+  </form>
+  <div class="message" id="messageBox"></div>
+</div>
+
+<script>
+  const form = document.getElementById('taskForm');
+  const messageBox = document.getElementById('messageBox');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    messageBox.textContent = "";
+
+    const name = document.getElementById('name').value;
+    const date = document.getElementById('date').value;
+    const task_details = document.getElementById('task_details').value;
+
+    const payload = {
+      name,
+      date,
+      task_details
+    };
+
+    try {
+      const res = await fetch('http://localhost:8000/create-task', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        messageBox.style.color = 'green';
+        messageBox.textContent = `Task created successfully! Task ID: ${data.task_id}`;
+      } else {
+        messageBox.style.color = 'red';
+        messageBox.textContent = data.detail || "Error creating task";
+      }
+
+    } catch (err) {
+      messageBox.style.color = 'red';
+      messageBox.textContent = "Error connecting to server";
+      console.error(err);
+    }
+  });
+</script>
+
+</body>
+</html>
